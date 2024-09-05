@@ -1,0 +1,223 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+.AppContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  position: relative;
+  background: linear-gradient(#0077b6, #00b4d8, #90e0ef);
+  overflow: hidden;
+}
+
+.AppContainer.submitted {
+  background: linear-gradient(#00b4d8, #90e0ef);
+}
+
+/* Logo styling */
+.AppLogo {
+  position: absolute;
+  border-radius: 20px;
+  margin: 10px;
+  transition: width 0.3s ease, top 0.3s ease, left 0.3s ease;
+}
+
+.AppLogo.largeLogo {
+  top: 40px; /* Adjust as needed */
+  width: 400px; /* Larger size for initial screen */
+}
+
+.AppLogo.smallLogo {
+  top: 5px;
+  left: 5px;
+  width: 130px; /* Smaller size for post-submission screen */
+}
+
+/* Initial screen styling */
+.InitialScreen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end; /* Push content to the bottom */
+}
+
+.InputTextWrapper {
+  position: relative;
+  width: 80%; /* Adjust as needed */
+  max-width: 600px; /* Limit width */
+  margin-bottom: 20px; /* Space between input and bottom */
+}
+
+.TextInput {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  padding-right: 60px; /* Extra space for submit button */
+  border: 2px solid black;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+}
+
+.SubmitButton {
+  position: absolute;
+  right: 15px; /* Position near the right edge */
+  top: 50%; /* Position vertically center relative to the text area */
+  transform: translateY(-50%); /* Center vertically */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 1;
+}
+
+.SubmitButton i {
+  width: 30px; /* Increase size for better visibility */
+  height: 30px; /* Increase size for better visibility */
+  color: black; /* Set the icon color to black */
+}
+
+.ResultContainer {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #CED4DA;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  height: 15%;
+  max-width: 600px;
+  max-height: 60vh; /* Adjust this value as needed to fit within the viewport */
+  overflow: auto; /* Add scrollbars if content overflows */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-style: solid;
+  border-color: black;
+}
+
+
+/* Notecard container and styling */
+.NotecardContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.Notecard {
+  position: relative;
+  background: #FDFFB6;
+  padding: 20px;
+  border-radius: 8px;
+  top: 25%;
+  width: 50%;
+  height: 40%;
+  text-align: center;
+  border-style: solid;
+  border-color: black;
+}
+
+/* Navigation buttons for notecards */
+.NavButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 3rem; /* Increase size for better visibility */
+  color: black; /* Set the icon color to black */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2; /* Ensure buttons are above other content */
+}
+
+.NavButton.prev {
+  left: 10px; /* Position inside the notecard */
+}
+
+.NavButton.next {
+  right: 10px; /* Position inside the notecard */
+}
+
+.NavButton:disabled {
+  opacity: 0.3; /* More transparent when disabled */
+  cursor: not-allowed;
+}
+
+/* Popup styling */
+.PopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.PopupContent {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px; /* Adjust the width as needed */
+  display: flex;
+  flex-direction: column; /* Arrange items vertically */
+}
+
+.PopupContent h2 {
+  margin-top: 0;
+}
+
+.PopupContent label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.PopupContent input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.PopupContent .question-amount-container {
+  margin-bottom: 20px; /* Space between the slider and the button */
+}
+
+.PopupContent .question-amount-container h2 {
+  margin-bottom: 5px; /* Space between the heading and the slider */
+}
+
+.PopupContent .slider {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.PopupContent .slider-value {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.PopupContent button {
+  align-self: center; 
+  padding: 8px 16px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.PopupContent button:hover {
+  background-color: #0056b3;
+}
