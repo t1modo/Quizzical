@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import axios from 'axios';
-import logo from './assets/quiz_me_logo.png';
+import logo from './assets/quizzical.svg';
 import feather from 'feather-icons';
 
 const Popup = ({ isOpen, onClose, selectedOptions, onSelectOption, onSliderChange }) => {
