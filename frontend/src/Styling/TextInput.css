@@ -1,0 +1,56 @@
+.InitialScreen {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.InputTextWrapper {
+    position: relative;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    top: 10%;
+    margin-top: 20px;
+}
+
+.TextInput {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    padding-right: 60px;
+    border: 2px solid black;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: none; /* Prevent resizing */
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+/* Submit Button Styles */
+.SubmitButton {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1;
+}
+
+.SubmitButton i {
+    width: 30px;
+    height: 30px;
+    color: #000
+}
+
+/* Remove background color on hover */
+.SubmitButton:hover {
+    background: transparent; /* Keep background transparent on hover */
+}
+
+.SubmitButton:hover i {
+    color: rgb(0, 0, 0); /* Ensure the icon color stays black on hover */
+}

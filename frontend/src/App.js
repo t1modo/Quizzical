@@ -1,133 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import axios from 'axios';
-import logo from './assets/quizzical.svg';
-import feather from 'feather-icons';
-
-const Popup = ({ isOpen, onClose, selectedOptions, onSelectOption, onSliderChange }) => {
-  const [sliderValue, setSliderValue] = useState(10);
-
-  const handleSliderChange = (event) => {
-    const value = parseInt(event.target.value, 10);
-    setSliderValue(value);
-    onSliderChange(value);
-  };
-
-  // Check if at least one checkbox is selected
-  const canClose = Object.values(selectedOptions).some(isChecked => isChecked);
-
-  return isOpen ? (
-    <div className="PopupOverlay">
-      <div className="PopupContent">
-        <h2>Select Options</h2>
-        {Object.keys(selectedOptions).map(option => (
-          <div key={option}>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedOptions[option]}
-                onChange={(e) => onSelectOption(option, e.target.checked)}
-              />
-              {option}
-            </label>
-          </div>
-        ))}
-        <div className="question-amount-container">
-          <h2>Number of Notecards:</h2>
-          <input
-            type="range"
-            min="1"
-            max="50"
-            value={sliderValue}
-            onChange={handleSliderChange}
-            className="slider"
-          />
-          <div className="slider-value">{sliderValue}</div>
-        </div>
-        <button 
-          onClick={onClose} 
-          disabled={!canClose}
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  ) : null;
-};
+import Logo from './Components/Logo';
+import Notecard from './Components/Notecard';
+import TextInput from './Components/TextInput';
+import Grade from './Components/Grade';
+import { formatFeedback } from './utils/utils';
 
 function App() {
-  const [result, setResult] = useState("");
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState({
-    'Multiple Choice': false,
-    'True/False': false,
-    'Short Answer': false,
-    'Fill-in-the-blank': false,
-  });
+  const [parsedData, setParsedData] = useState([]);
   const [isNotecardVisible, setIsNotecardVisible] = useState(false);
-  const [notecardCount, setNotecardCount] = useState(10); // Default notecard count set to 10
   const [currentNotecardIndex, setCurrentNotecardIndex] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const textareaRef = useRef(null); // Ref for textarea
+  const [userAnswers, setUserAnswers] = useState({});
+  const [feedback, setFeedback] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showGrades, setShowGrades] = useState(false);
 
-  // Generate notecard data dynamically based on the notecard count
-  const generateNotecardData = (count) => {
-    return Array.from({ length: count }, (_, index) => ({
-      question: `Question #${index + 1}`,
-      content: `Backend will generate a question here`,
-    }));
-  };
-
-  // Get the current notecard data based on slider value
-  const notecardData = generateNotecardData(notecardCount);
-
-  const handleSubmit = async () => {
-    const userInput = textareaRef.current.value;
-  
+  const handleSubmit = async (userInput) => {
     if (!userInput.trim()) {
-        alert('Please enter some text.');
-        return;
+      alert('Please enter some text.');
+      return;
     }
-  
+
     try {
-        const response = await axios.post('/ask', {
-            question: userInput,
-            context: 'Generate questions to quiz the user on the content they gave you',
-        });
-  
-        setResult(response.data.answer);
-        setIsPopupOpen(true);
-        setIsSubmitted(true);
-    } catch (error) {
-        console.error('Error submitting question:', error);
-        alert(`There was an error submitting your question: ${error.response?.data?.error || error.message}`);
-    }
-};
-
-  const handleSelectOption = (option, isChecked) => {
-    setSelectedOptions(prevOptions => ({
-      ...prevOptions,
-      [option]: isChecked,
-    }));
-  };
-
-  const handlePopupClose = () => {
-    // Ensure at least one checkbox is selected before closing
-    if (Object.values(selectedOptions).some(isChecked => isChecked)) {
-      setIsPopupOpen(false);
+      const response = await axios.post('http://localhost:3000/parse-questions', { notes: userInput });
+      const parsedData = response.data.questionAnswerPairs;
+      setParsedData(parsedData);
       setIsNotecardVisible(true);
-    } else {
-      alert("Please select at least one option before closing.");
+      setIsSubmitted(true);
+      console.log("Parsed data received:", parsedData);
+    } catch (error) {
+      console.error('Error submitting question:', error);
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
-  };
-
-  const handleSliderChange = (newCount) => {
-    setNotecardCount(newCount);
-    setCurrentNotecardIndex(0);
   };
 
   const handleNextNotecard = () => {
-    if (currentNotecardIndex < notecardCount - 1) {
+    if (currentNotecardIndex < parsedData.length - 1) {
       setCurrentNotecardIndex(currentNotecardIndex + 1);
     }
   };
@@ -138,65 +49,62 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      feather.replace({ class: 'feather-icon' });
-    }, 100); // Add a short delay for icon replacement
+  const handleAnswerChange = (index, value) => {
+    setUserAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [index]: value,
+    }));
+  };
 
-    return () => clearTimeout(timer); // Clean up the timer on component unmount
-  }, [isPopupOpen, isNotecardVisible]); // Re-run when these states change
+  const handleSubmitAllAnswers = async () => {
+    const confirmSubmit = window.confirm('Submit all answers? This will check and grade all answers.');
+    if (!confirmSubmit) return;
+
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      console.log("Submitting answers for grading:", userAnswers);
+      const response = await axios.post('http://localhost:3000/check-answers', { answers: userAnswers });
+      console.log('Server response:', response);
+
+      if (response.status === 200) {
+        const formattedFeedback = formatFeedback(response.data.feedback);
+        console.log('Formatted feedback data:', formattedFeedback);
+        setFeedback(formattedFeedback);
+        setShowGrades(true);
+      } else {
+        setErrorMessage(response.data.error || 'An error occurred while grading.');
+      }
+    } catch (error) {
+      console.error('Error submitting answers:', error);
+      setErrorMessage('An error occurred while grading your answers.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className={`AppContainer ${isSubmitted ? 'submitted' : ''}`}>
-      <img src={logo} alt="App Logo" className={`AppLogo ${isSubmitted ? 'smallLogo' : 'largeLogo'}`} />
-      {!isSubmitted && (
-        <div className="InitialScreen">
-          <div className="InputTextWrapper">
-            <textarea ref={textareaRef} className="TextInput" placeholder="Paste or type text here . . ."></textarea>
-            <button onClick={handleSubmit} className="SubmitButton">
-              <i data-feather="arrow-up-circle" className="feather-icon"></i>
-            </button>
-          </div>
-        </div>
+      <Logo isSubmitted={isSubmitted} />
+      {!isSubmitted && <TextInput onSubmit={handleSubmit} />}
+      
+      {isSubmitted && !showGrades && isNotecardVisible && (
+        <Notecard
+          notecardData={parsedData}
+          currentIndex={currentNotecardIndex}
+          onNext={handleNextNotecard}
+          onPrev={handlePrevNotecard}
+          userAnswers={userAnswers}
+          onAnswerChange={handleAnswerChange}
+          onSubmitAllAnswers={handleSubmitAllAnswers}
+          isLoading={isLoading}
+          feedback={feedback}
+          errorMessage={errorMessage}
+        />
       )}
-      {isSubmitted && (
-        <>
-          {result && (
-            <div className="ResultContainer">
-              {result}
-            </div>
-          )}
-          <Popup
-            isOpen={isPopupOpen}
-            onClose={handlePopupClose}
-            selectedOptions={selectedOptions}
-            onSelectOption={handleSelectOption}
-            onSliderChange={handleSliderChange}
-          />
-          {isNotecardVisible && (
-            <div className="NotecardContainer">
-              <div className="Notecard">
-                <button
-                  onClick={handlePrevNotecard}
-                  disabled={currentNotecardIndex === 0}
-                  className="NavButton prev"
-                >
-                  <i data-feather="arrow-left" className="feather-icon"></i>
-                </button>
-                <h2>{notecardData[currentNotecardIndex]?.question}</h2>
-                <p>{notecardData[currentNotecardIndex]?.content}</p>
-                <button
-                  onClick={handleNextNotecard}
-                  disabled={currentNotecardIndex === notecardCount - 1}
-                  className="NavButton next"
-                >
-                  <i data-feather="arrow-right" className="feather-icon"></i>
-                </button>
-              </div>
-            </div>
-          )}
-        </>
-      )}
+      
+      {showGrades && <Grade feedback={feedback} parsedData={parsedData} />}
     </div>
   );
 }

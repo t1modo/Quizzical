@@ -1,0 +1,20 @@
+.GradeContainer {
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.GradeItem {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.GradeItem h3 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.GradeItem p {
+    margin: 4px 0;
+}
+  

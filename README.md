@@ -1,3 +1,3 @@
-# Quiz Me
+# Quizzical
 
 Womp Womp

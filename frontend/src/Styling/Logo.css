@@ -1,0 +1,22 @@
+.AppLogo {
+  width: 200px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  transition: width 0.3s ease, top 0.3s ease, left 0.3s ease;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%); /* Center the logo by default */
+}
+
+.largeLogo {
+  width: 400px; /* Larger size for the initial screen */
+}
+
+.smallLogo {
+  width: 100px; /* Smaller size in the top right corner */
+  top: 20px; /* Position at the top */
+  left: 20px; /* Position in the top right */
+  right: auto; /* Override the left property */
+  transform: none; /* Remove centering transform */
+}
