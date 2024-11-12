@@ -19,7 +19,6 @@ Quizzical is a web application designed to help students study by offering a per
 - **NLP-Powered Evaluation**: Using OpenAI’s natural language processing capabilities, Quizzical evaluates free-response answers for meaningful grading that goes beyond basic keyword matching.
 
 ## Technologies Used
-- **React**: The primary framework used for building an interactive and responsive quiz-taking interface.
-- **JavaScript**: Handles core game logic, input processing, and API interactions within the React environment.
+- **React**: The primary JavaScript library used for building an interactive and responsive quiz-taking interface.
 - **CSS**: Styles the user interface, enhancing the quiz experience with a clean and educational design.
 - **OpenAI API**: Powers the backend grading system by comparing user-typed answers with stored answers based on semantic similarity, ensuring accurate and useful feedback.
